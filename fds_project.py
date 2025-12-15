@@ -37,7 +37,7 @@ def preprocess_dataframe(df, min_samples=30):
     valid_venues = venue_counts[venue_counts >= min_samples].index
     df_filtered = df[df["venue"].isin(valid_venues)].copy()
     label_encoder = LabelEncoder()
-    df_filtered["label"] = label_encoder.fit_transform(df["venue"])
+    df_filtered["label"] = label_encoder.fit_transform(df_filtered["venue"])
     return df_filtered, label_encoder
 
 def split_data(df, test_size=0.2, random_state=42):
