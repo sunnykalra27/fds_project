@@ -30,17 +30,24 @@ def preprocess_dataframe(df, min_samples=30):
     df["description"] = df["description"].fillna("")
     df["venue"] = df["venue"].astype(str)
 
+    # Combine title + description and clean
     df["text_raw"] = df["title"] + " " + df["description"]
     df["text"] = df["text_raw"].apply(clean_text)
 
+    print("\nSample cleaned text + venue:")
+    print(df[["text", "venue"]].head())
+
+    # 3) Filter rare venues
+    min_samples = 30
     venue_counts = df["venue"].value_counts()
     valid_venues = venue_counts[venue_counts >= min_samples].index
-    df = df[df["venue"].isin(valid_venues)].copy()
 
-    label_encoder = LabelEncoder()
-    df["label"] = label_encoder.fit_transform(df["venue"])
+    df_filtered = df[df["venue"].isin(valid_venues)].copy()
+    print("\nAfter filtering rare venues:")
+    print("Filtered shape:", df_filtered.shape)
+    print("Number of classes (venues):", df_filtered["venue"].nunique())
 
-    return df, label_encoder
+    return df_filtered, label_encoder
 
 def split_data(df, test_size=0.2, random_state=42):
     X = df["text"].values
